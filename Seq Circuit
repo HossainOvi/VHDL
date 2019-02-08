@@ -1,0 +1,33 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity vhdl1 is
+	Port(clk: in std_logic;
+	direction : in std_logic;
+	rst: in std_logic;
+	enable: in std_logic;
+	output: out std_logic_vector(7 downto 0));
+end vhdl1;
+
+architecture arch of vhdl1 is
+signal intCounter: integer range 0 to 255;
+
+begin-- architecture begins 
+	process_label: process(clk) --using only 1 register 
+	begin --process begins
+		if rising_edge(clk) then
+			if rst = '1' then
+				output <= (others => '0');
+				intCount <= 0;
+			elsif enable = '1' then
+				if direction = '1' then
+					intCount <= intCount + 1;  --counts in upward direction 
+					else
+					intCounter <= intCount - 1; --counts in downward direction 
+				end if;
+			end if;
+		end if;
+	end process;
+	output <= std_logic_vector( TO_UNSIGNED(intCounter,8);
+end arch;
