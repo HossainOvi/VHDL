@@ -1,0 +1,81 @@
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity g01_lab4_broadcast is  --Declaring entities 	
+	port(	x: in std_logic_vector(15 downto 0);
+			clk: in std_logic;
+			rst: std_logic;
+			y: out std_logic_vector(16 downto 0));
+end g01_lab4_broadcast;
+
+architecture iTpleTentation of g01_lab4_broadcast is                
+type lab_array is array (0 to 24) of signed(31 downto 0);  --- Declaring array for
+type FIR_array is array (0 to 24) of signed (31 downto 0);
+type inputs_array is array (0 to 24) of signed(15 downto 0);
+type Temp_array is array (0 to 24) of signed(31 downto 0);
+signal x_in : signed(15 downto 0);
+signal T : Temp_array;
+signal Y_array : FIR_array;
+signal B : inputs_array;
+
+begin
+
+B(0) <= "0000001001110011";
+B(1) <= "0000000000010001";
+B(2) <= "1111111111010010";
+B(3) <= "1111111011011101";
+B(4) <= "0000001100011010";
+B(5) <= "1111110110100111";
+B(6) <= "1111110000001101";
+B(7) <= "0000110110111101";
+B(8) <= "1110110001110010";
+B(9) <= "0000110111111000";
+B(10) <= "0000001100001000";
+B(11) <= "1110101000001010";
+B(12) <= "0001111000110100";
+B(13) <= "1110101000001010";
+B(14) <= "0000001100001000";
+B(15) <= "0000110111111000";
+B(16) <= "1110110001110010";
+B(17) <= "0000110110111101";
+B(18) <= "1111110000001101";
+B(19) <= "1111110110100111";
+B(20) <= "0000001100011010";
+B(21) <= "1111111011011101";
+B(22) <= "1111111111010010";
+B(23) <= "0000000000010001";
+B(24) <= "0000001001110011";
+
+FIR_process: process(clk, rst)
+	begin
+		if rst = '1' then
+
+			y <= (others => '0');
+			x_in <= (others => '0');
+
+			for I in 0 to 24 loop
+				Y_array(I) <= (others => '0');
+				T(I) <= (others => '0');
+			end loop;
+
+		elsif rising_edge(clk) then
+			x_in <= signed(x);
+
+			for I in 0 to 23 loop
+				Y_array(23-I) <= T(24-I);
+			end loop;
+
+			y <= T(0)(31)&T(0)(30)&T(0)(29)&T(0)(28)&T(0)(27)&T(0)(26)&T(0)(25)&T(0)(24)&T(0)(23)&T(0)(22)&T(0)(21)&T(0)(20)&T(0)(19)&T(0)(18)&T(0)(17)&T(0)(16)&T(0)(15); 
+
+		end if;
+		
+
+		for I in 0 to 23 loop
+			T(I) <= (x_in * B(I)) + Y_array(I);
+		end loop;
+
+		T(24) <= (x_in * B(24));
+
+	end process;
+end iTpleTentation;
